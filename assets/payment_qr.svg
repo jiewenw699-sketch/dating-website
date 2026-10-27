@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect width="300" height="300" rx="16" fill="#faf5ff" stroke="#7b2ff7" stroke-width="4" stroke-dasharray="10 8"/>
+  <text x="150" y="110" font-size="56" text-anchor="middle" fill="#ff2d78">💳</text>
+  <text x="150" y="160" font-size="17" font-weight="bold" text-anchor="middle" fill="#2b1a33">收款码占位图</text>
+  <text x="150" y="190" font-size="13" text-anchor="middle" fill="#7a6a85">请把你的微信/支付宝收款码</text>
+  <text x="150" y="212" font-size="13" text-anchor="middle" fill="#7a6a85">保存为 assets/payment_qr.png</text>
+  <text x="150" y="248" font-size="12" font-weight="bold" text-anchor="middle" fill="#06a97e">替换后自动生效</text>
+</svg>

@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>心动实验室 💘 | Match Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ff2d78'/%3E%3Ctext x='16' y='23' font-size='17' text-anchor='middle' fill='%23fff'%3E%E2%9D%A4%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --pink: #ff2d78;
+      --hot: #ff5e3a;
+      --purple: #7b2ff7;
+      --orange: #ff9f1c;
+      --teal: #06d6a0;
+      --yellow: #ffd60a;
+      --bg: #fff7f0;
+      --ink: #2b1a33;
+      --muted: #7a6a85;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* hidden 属性优先级最高，避免被 display:flex 覆盖 */
+    [hidden] { display: none !important; }
+
+    body {
+      font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 背景彩色气泡 */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: .45;
+      z-index: -1;
+      animation: float 12s ease-in-out infinite alternate;
+    }
+    .blob.b1 { width: 420px; height: 420px; background: var(--pink); top: -120px; left: -120px; }
+    .blob.b2 { width: 380px; height: 380px; background: var(--purple); top: 30%; right: -140px; animation-delay: -4s; }
+    .blob.b3 { width: 340px; height: 340px; background: var(--orange); bottom: -100px; left: 20%; animation-delay: -8s; }
+    @keyframes float {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, -30px) scale(1.15); }
+    }
+
+    /* 顶部 */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 247, 240, .85);
+      backdrop-filter: blur(10px);
+      border-bottom: 3px solid var(--ink);
+    }
+    .nav {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: .8rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 900;
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--pink), var(--orange), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 1px;
+    }
+    .lang-switch {
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: #fff;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: .85rem;
+      padding: .3rem .7rem;
+      cursor: pointer;
+    }
+
+    main { max-width: 1080px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+    /* Hero */
+    .hero { text-align: center; padding: 2rem 1rem 1.5rem; }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(90deg, var(--pink), var(--hot), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p { margin-top: .8rem; color: var(--muted); font-size: 1.05rem; font-weight: 500; }
+
+    /* VS 分栏 */
+    .vs-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1.5rem;
+    }
+    .panel {
+      background: var(--card);
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      padding: 1.4rem;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+    .panel.left { border-color: var(--pink); box-shadow: 8px 8px 0 var(--pink); }
+    .panel.right { border-color: var(--purple); box-shadow: 8px 8px 0 var(--purple); }
+    .panel h2 {
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: .2rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .panel.left h2 { color: var(--pink); }
+    .panel.right h2 { color: var(--purple); }
+    .panel input.person-name {
+      width: 100%;
+      border: 2px dashed #d9cbe3;
+      border-radius: 10px;
+      padding: .5rem .8rem;
+      font-size: 1rem;
+      font-weight: 700;
+      margin: .5rem 0 1rem;
+      text-align: center;
+      font-family: inherit;
+    }
+    .vs-badge {
+      align-self: center;
+      width: 74px; height: 74px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--pink));
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      flex-shrink: 0;
+    }
+
+    /* 分类区块 */
+    .cat {
+      margin-bottom: 1.4rem;
+      border-top: 3px solid #f1e6f7;
+      padding-top: .9rem;
+    }
+    .cat-title {
+      font-weight: 900;
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      margin-bottom: .7rem;
+    }
+    .cat-title .chip {
+      font-size: .7rem;
+      color: #fff;
+      padding: .1rem .55rem;
+      border-radius: 999px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .chip.c-material { background: var(--orange); }
+    .chip.c-life { background: var(--teal); }
+    .chip.c-mind { background: var(--purple); }
+
+    .field { margin-bottom: .85rem; }
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .85rem;
+      font-weight: 700;
+      margin-bottom: .25rem;
+      color: var(--ink);
+      gap: .5rem;
+    }
+    .field label .val { color: var(--muted); font-weight: 600; font-size: .8rem; white-space: nowrap; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #efe3f7;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--pink);
+      border: 3px solid var(--ink);
+      cursor: grab;
+      transition: transform .15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); cursor: grabbing; }
+    .panel.right input[type="range"]::-webkit-slider-thumb { background: var(--purple); }
+
+    .range-ends {
+      display: flex;
+      justify-content: space-between;
+      font-size: .68rem;
+      color: var(--muted);
+      margin-top: .15rem;
+      gap: .5rem;
+    }
+
+    select {
+      width: 100%;
+      padding: .5rem .7rem;
+      border: 2px solid #e6d8f0;
+      border-radius: 10px;
+      font-size: .9rem;
+      font-weight: 600;
+      background: #faf5ff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .panel.left select:focus { border-color: var(--pink); }
+    .panel.right select:focus { border-color: var(--purple); }
+
+    /* 结果区 */
+    .result { margin-top: 2rem; text-align: center; }
+    .gauge-card {
+      background: var(--card);
+      border: 3px solid var(--ink);
+      border-radius: 26px;
+      box-shadow: 10px 10px 0 var(--ink);
+      padding: 2rem 1.5rem;
+      max-width: 760px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .gauge-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,45,120,.07), rgba(123,47,247,.07), rgba(255,159,28,.07));
+      pointer-events: none;
+    }
+
+    .gauge-wrap { position: relative; width: 220px; height: 220px; margin: 0 auto; }
+    .gauge-wrap svg { transform: rotate(-90deg); }
+    .gauge-bg { stroke: #f0e6f8; }
+    .gauge-fg {
+      stroke: url(#gaugeGrad);
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1);
+    }
+    .gauge-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #scoreNum {
+      font-size: 3.2rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--pink), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+    }
+    .gauge-center small { color: var(--muted); font-weight: 700; }
+
+    #verdict { font-size: 1.5rem; font-weight: 900; margin-top: 1rem; }
+    #verdictText { color: var(--muted); font-weight: 600; max-width: 480px; margin: .4rem auto 0; }
+
+    /* 分类得分条 */
+    .bars { max-width: 520px; margin: 1.4rem auto 0; text-align: left; }
+    .bar-row { display: grid; grid-template-columns: 6.5rem 1fr 3rem; gap: .6rem; align-items: center; margin-bottom: .55rem; }
+    .bar-row .name { font-size: .85rem; font-weight: 800; }
+    .bar-track { height: 14px; background: #f0e6f8; border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0; border-radius: 999px; transition: width 1s cubic-bezier(.22,1,.36,1); }
+    .bar-row .num { font-size: .85rem; font-weight: 800; text-align: right; }
+    .fill-material { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+    .fill-life { background: linear-gradient(90deg, var(--teal), #7ee8c0); }
+    .fill-mind { background: linear-gradient(90deg, var(--purple), #b78cff); }
+    .fill-total { background: linear-gradient(90deg, var(--pink), var(--hot)); }
+
+    /* 红娘点评 */
+    .tips { max-width: 620px; margin: 1.4rem auto 0; display: grid; gap: .6rem; }
+    .tip {
+      background: #fff8e8;
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: .65rem .9rem;
+      font-size: .9rem;
+      font-weight: 600;
+      text-align: left;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+    .tip.good { background: #e8fbf3; }
+    .tip.warn { background: #ffecf1; }
+    .tip b { display: inline-block; margin-right: .3rem; }
+
+    /* 按钮 */
+    .btn-row { margin-top: 1.8rem; display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      padding: .8rem 1.8rem;
+      font-size: 1.05rem;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 5px 5px 0 var(--ink);
+      transition: transform .12s, box-shadow .12s;
+    }
+    .btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+    .btn-main {
+      background: linear-gradient(90deg, var(--pink), var(--hot));
+      color: #fff;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .btn-demo { background: var(--yellow); color: var(--ink); }
+    .btn-reset { background: #fff; color: var(--ink); }
+    .btn-pay { background: linear-gradient(90deg, #16c784, #06d6a0); color: #fff; }
+
+    /* 语言选择遮罩 */
+    .lang-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: linear-gradient(135deg, #ff2d78 0%, #ff5e3a 45%, #7b2ff7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .lang-box {
+      background: #fff;
+      border: 4px solid var(--ink);
+      border-radius: 28px;
+      box-shadow: 12px 12px 0 rgba(0,0,0,.35);
+      padding: 2.2rem 2rem;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+    }
+    .lang-box h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: .3rem; }
+    .lang-box .sub { color: var(--muted); font-weight: 600; margin-bottom: 1.5rem; font-size: .95rem; }
+    .lang-btns { display: grid; gap: .8rem; }
+    .lang-opt {
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      padding: .9rem;
+      font-size: 1.1rem;
+      font-weight: 900;
+      cursor: pointer;
+      font-family: inherit;
+      background: #faf5ff;
+      transition: transform .1s, background .15s;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+    .lang-opt:hover { background: var(--yellow); transform: translateY(-2px); }
+
+    /* 付款弹窗 */
+    .pay-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1500;
+      background: rgba(43, 26, 51, .72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .pay-box {
+      background: #fff;
+      border: 4px solid var(--ink);
+      border-radius: 24px;
+      box-shadow: 10px 10px 0 var(--ink);
+      max-width: 400px;
+      width: 100%;
+      padding: 1.8rem 1.5rem;
+      text-align: center;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .pay-box h3 { font-size: 1.35rem; font-weight: 900; }
+    .pay-price {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--pink);
+      margin: .3rem 0 .8rem;
+    }
+    .pay-desc { color: var(--muted); font-weight: 600; font-size: .9rem; margin-bottom: 1rem; }
+    .qr-wrap {
+      border: 3px dashed #d9cbe3;
+      border-radius: 16px;
+      padding: .8rem;
+      margin-bottom: 1rem;
+      background: #faf5ff;
+    }
+    .qr-wrap img { width: 100%; max-width: 260px; display: block; margin: 0 auto; border-radius: 8px; }
+    .qr-hint { font-size: .75rem; color: var(--muted); font-weight: 600; margin-top: .4rem; }
+    .pay-btns { display: grid; gap: .6rem; }
+    .pay-cancel { background: #fff; color: var(--ink); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ink);
+      color: #fff;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: .7rem 1.2rem;
+      border-radius: 999px;
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    .toast.ok { background: #06a97e; }
+    .toast.err { background: #d92662; }
+
+    /* 心形彩带 */
+    .heart-fx {
+      position: fixed;
+      top: -30px;
+      font-size: 1.4rem;
+      z-index: 999;
+      pointer-events: none;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(360deg); opacity: .2; }
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 600;
+    }
+    footer .privacy { display: block; margin-top: .3rem; font-size: .75rem; }
+
+    @media (max-width: 820px) {
+      .vs-wrap { grid-template-columns: 1fr; }
+      .vs-badge { justify-self: center; }
+      .bar-row { grid-template-columns: 5.4rem 1fr 2.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <!-- 语言选择（首屏） -->
+  <div class="lang-overlay" id="langOverlay">
+    <div class="lang-box">
+      <h2>💘 心动实验室</h2>
+      <p class="sub">请选择语言 · Please choose your language · 請選擇語言</p>
+      <div class="lang-btns">
+        <button class="lang-opt" data-lang="zh">简体中文</button>
+        <button class="lang-opt" data-lang="tw">繁體中文</button>
+        <button class="lang-opt" data-lang="en">English</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="nav">
+      <a href="#" class="logo" id="logo">💘 心动实验室</a>
+      <select class="lang-switch" id="langSwitch">
+        <option value="zh">简体中文</option>
+        <option value="tw">繁體中文</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 id="heroTitle"></h1>
+      <p id="heroSub"></p>
+    </section>
+
+    <!-- 双人输入区 -->
+    <div class="vs-wrap">
+      <div class="panel left">
+        <h2 id="panelATitle"></h2>
+        <input class="person-name" id="nameA" maxlength="12">
+        <div id="fieldsA"></div>
+      </div>
+
+      <div class="vs-badge">VS</div>
+
+      <div class="panel right">
+        <h2 id="panelBTitle"></h2>
+        <input class="person-name" id="nameB" maxlength="12">
+        <div id="fieldsB"></div>
+      </div>
+    </div>
+
+    <!-- 按钮 -->
+    <div class="btn-row">
+      <button class="btn btn-main" id="btnMatch"></button>
+      <button class="btn btn-demo" id="btnDemo">🎲</button>
+      <button class="btn btn-reset" id="btnReset">🔄</button>
+    </div>
+
+    <!-- 结果区 -->
+    <section class="result" id="result" hidden>
+      <div class="gauge-card">
+        <div class="gauge-wrap">
+          <svg width="220" height="220" viewBox="0 0 220 220">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff2d78"/>
+                <stop offset="50%" stop-color="#ff9f1c"/>
+                <stop offset="100%" stop-color="#7b2ff7"/>
+              </linearGradient>
+            </defs>
+            <circle class="gauge-bg" cx="110" cy="110" r="95" fill="none" stroke-width="18"/>
+            <circle class="gauge-fg" id="gaugeFg" cx="110" cy="110" r="95" fill="none" stroke-width="18"
+                    stroke-dasharray="596.9" stroke-dashoffset="596.9"/>
+          </svg>
+          <div class="gauge-center">
+            <span id="scoreNum">0</span>
+            <small id="scoreLabel"></small>
+          </div>
+        </div>
+
+        <h2 id="verdict"></h2>
+        <p id="verdictText"></p>
+
+        <div class="bars">
+          <div class="bar-row"><span class="name" id="barNameMaterial"></span><div class="bar-track"><div class="bar-fill fill-material" id="barMaterial"></div></div><span class="num" id="numMaterial">-</span></div>
+          <div class="bar-row"><span class="name" id="barNameLife"></span><div class="bar-track"><div class="bar-fill fill-life" id="barLife"></div></div><span class="num" id="numLife">-</span></div>
+          <div class="bar-row"><span class="name" id="barNameMind"></span><div class="bar-track"><div class="bar-fill fill-mind" id="barMind"></div></div><span class="num" id="numMind">-</span></div>
+          <div class="bar-row"><span class="name" id="barNameTotal"></span><div class="bar-track"><div class="bar-fill fill-total" id="barTotal"></div></div><span class="num" id="numTotal">-</span></div>
+        </div>
+
+        <div class="tips" id="tips"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 付款弹窗 -->
+  <div class="pay-overlay" id="payOverlay" hidden>
+    <div class="pay-box">
+      <h3 id="payTitle"></h3>
+      <div class="pay-price">¥ 0.99</div>
+      <p class="pay-desc" id="payDesc"></p>
+      <div class="qr-wrap">
+        <img id="qrImg" src="assets/payment_qr.png" alt="Payment QR">
+        <p class="qr-hint" id="qrHint"></p>
+      </div>
+      <div class="pay-btns">
+        <button class="btn btn-pay" id="btnPaid"></button>
+        <button class="btn pay-cancel" id="btnPayCancel"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    <span id="footerText"></span>
+    <span class="privacy" id="footerPrivacy"></span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js"></script>
+  <script>
+    /* ================= 云端配置 ================= */
+    const publicConfig = {
+      endpoint: "https://heart-lab.app.workbuddy.host",
+      oauthRelayBaseUrl: "https://www.workbuddy.cn/v2/as/genie-baas/oauth",
+      publishableKey: "wbpk_UtRQwM7I1N71SJLfcYZ7LS_YieMzxMx822ERt4Ek9AaSzKDoAkvdqAH"
+    };
+    let cloud = null;
+    try {
+      cloud = WorkBuddyCloud.createWorkBuddyCloud({
+        endpoint: publicConfig.endpoint,
+        oauthRelayBaseUrl: publicConfig.oauthRelayBaseUrl,
+        publishableKey: publicConfig.publishableKey,
+      });
+    } catch (e) {
+      console.warn("cloud init failed", e);
+    }
+
+    /* ================= 题目定义（28 项） ================= */
+    const FIELDS = [
+      // 物质条件 30%
+      { cat: "material", key: "income",  type: "range", max: 100, scale: 100, unit: "k" },
+      { cat: "material", key: "saving",  type: "range", max: 100, scale: 100 },
+      { cat: "material", key: "edu",     type: "select", penalty: 8 },
+      { cat: "material", key: "house",   type: "select", penalty: 10 },
+      { cat: "material", key: "car",     type: "select", penalty: 8 },
+      { cat: "material", key: "debt",    type: "select", penalty: 12 },
+      { cat: "material", key: "family",  type: "select", penalty: 10 },
+
+      // 生活习惯 35%
+      { cat: "life", key: "sleep",  type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "clean",  type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "spend",  type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "social", type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "sport",  type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "phone",  type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "travel", type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "food",   type: "range", max: 100, scale: 100 },
+      { cat: "life", key: "smoke",  type: "select", penalty: 15 },
+      { cat: "life", key: "drink",  type: "select", penalty: 10 },
+      { cat: "life", key: "pet",    type: "select", penalty: 12 },
+
+      // 精神思想 35%
+      { cat: "mind", key: "kid",     type: "select", penalty: 30 },
+      { cat: "mind", key: "living",  type: "select", penalty: 18 },
+      { cat: "mind", key: "career",  type: "range", max: 100, scale: 100 },
+      { cat: "mind", key: "space",   type: "range", max: 100, scale: 100 },
+      { cat: "mind", key: "express", type: "range", max: 100, scale: 100 },
+      { cat: "mind", key: "plan",    type: "range", max: 100, scale: 100 },
+      { cat: "mind", key: "hobby",   type: "select", penalty: 10 },
+      { cat: "mind", key: "emotion", type: "range", max: 100, scale: 100 },
+      { cat: "mind", key: "learn",   type: "range", max: 100, scale: 100 },
+      { cat: "mind", key: "argue",   type: "select", penalty: 15 },
+    ];
+
+    const WEIGHTS = { material: 0.30, life: 0.35, mind: 0.35 };
+    const CATS = ["material", "life", "mind"];
+
+    /* ================= 三语文案 ================= */
+    const I18N = {
+      zh: {
+        logo: "💘 心动实验室",
+        heroTitlePre: "你们俩，",
+        heroTitleGrad: "到底配不配？",
+        heroSub: "28 项真实条件：物质、习惯、三观一次算清楚 🔥",
+        panelA: "💗 甲方的条件",
+        panelB: "💜 乙方的条件",
+        namePh: "给TA起个代号（如：小王）",
+        catName: { material: "💰 物质条件", life: "🌿 生活习惯", mind: "🧠 精神思想" },
+        chip: { material: "30%", life: "35%", mind: "35%" },
+        btnMatch: "💘 开始配对",
+        scoreLabel: "匹配度",
+        barTotal: "❤️ 总匹配",
+        verdicts: [
+          { e: "💘", t: "天作之合！立马领证！", d: "月老看了这份报告都直呼内行。别犹豫了，这缘分打着灯笼都难找！" },
+          { e: "💖", t: "很有戏！大胆约！", d: "整体非常匹配，剩下的小差异正好互补。今晚就约出来吃饭吧！" },
+          { e: "🌶️", t: "有火花，但需要磨合", d: "基础不错，分歧也有。感情不是考试，聊聊也许就对了。" },
+          { e: "😬", t: "有点悬，谨慎前行", d: "差异比共同点多。除非你们都特别愿意为对方改变，否则容易互相消耗。" },
+          { e: "🧊", t: "平行宇宙的两个人", d: "这不是缘分的问题，是两个世界的问题。放过彼此，去人海里找更对的人吧。" }
+        ],
+        tGood: "✅ 默契点",
+        tGoodText: "你们俩在「{f}」上出奇一致，聊天不用解释太多。",
+        tWarn: "⚠️ 注意",
+        tWarnText: "「{f}」两人选择相距较远，建议提前聊开，别等在一起之后再翻旧账。",
+        tPerfect: "🏆 零冲突",
+        tPerfectText: "居然一个分歧点都没有？！你们是失散多年的灵魂伴侣吧！",
+        footer: "结果仅供娱乐参考，感情还是要靠真心 💞",
+        privacy: "🔒 你的测评数据仅保存在站长后台，不会公开展示，其他人不可见。",
+        payTitle: "解锁你们的缘分报告",
+        payDesc: "只需 0.99 元，即可查看完整匹配度报告 + 红娘点评。扫码支付后点击下方按钮。",
+        qrHint: "请使用微信/支付宝扫码支付 ¥0.99",
+        btnPaid: "✅ 我已付款，查看结果",
+        btnPayCancel: "再想想",
+        saveOk: "报告已解锁，测评记录已保存 🔒",
+        saveFail: "结果已显示，但云端记录保存失败，请检查网络",
+        toastDemo: "已填入随机示例，点击「开始配对」查看结果",
+        fields: {
+          income: { label: "月收入", l: ["吃土", "年薪百万"], unit: "k" },
+          saving: { label: "存款底气", l: ["月光族", "小金库厚实"] },
+          edu: { label: "学历", o: ["高中及以下", "大专", "本科", "硕士", "博士"] },
+          house: { label: "住房情况", o: ["租房", "有房带贷", "有房无贷", "多套房"] },
+          car: { label: "座驾情况", o: ["无车", "普通代步车", "中高端车", "豪华车"] },
+          debt: { label: "负债情况", o: ["无负债", "少量房贷车贷", "负债较多"] },
+          family: { label: "父母负担", o: ["无需赡养", "正常赡养", "压力较大"] },
+          sleep: { label: "作息", l: ["早睡早起养生派", "熬夜冠军夜猫子"] },
+          clean: { label: "整洁程度", l: ["乱中有序", "洁癖本癖"] },
+          spend: { label: "消费风格", l: ["能省则省", "及时行乐"] },
+          social: { label: "社交活跃度", l: ["宅家钉子户", "派对灵魂人物"] },
+          sport: { label: "运动频率", l: ["沙发土豆", "健身狂魔"] },
+          phone: { label: "手机依赖度", l: ["放下手机陪你", "机不离手"] },
+          travel: { label: "旅行偏好", l: ["宅家最香", "走遍世界"] },
+          food: { label: "饮食口味", l: ["清淡为主", "无辣不欢"] },
+          smoke: { label: "吸烟", o: ["从不", "偶尔应酬", "经常"] },
+          drink: { label: "喝酒", o: ["滴酒不沾", "小酌怡情", "无酒不欢"] },
+          pet: { label: "对宠物", o: ["爱宠人士", "中立", "不喜欢"] },
+          kid: { label: "生育观", o: ["坚定丁克", "随缘", "一定要孩子"] },
+          living: { label: "婚后与父母", o: ["分开住", "视情况", "希望同住"] },
+          career: { label: "事业与家庭的天平", l: ["家庭为重", "事业为重"] },
+          space: { label: "个人空间需求", l: ["如胶似漆", "需要独处充电"] },
+          express: { label: "感情表达方式", l: ["爱在心口难开", "热烈直球"] },
+          plan: { label: "做事风格", l: ["随性佛系", "计划控"] },
+          hobby: { label: "为兴趣花钱", o: ["舍得投入", "看心情", "尽量省"] },
+          emotion: { label: "情绪稳定性", l: ["易燃易爆炸", "情绪稳定器"] },
+          learn: { label: "成长意愿", l: ["得过且过", "终身学习"] },
+          argue: { label: "吵架之后", o: ["当天和好", "冷静一晚", "容易冷战"] }
+        }
+      },
+      tw: {
+        logo: "💘 心動實驗室",
+        heroTitlePre: "你們倆，",
+        heroTitleGrad: "到底配不配？",
+        heroSub: "28 項真實條件：物質、習慣、三觀一次算清楚 🔥",
+        panelA: "💗 甲方的條件",
+        panelB: "💜 乙方的條件",
+        namePh: "給TA起個代號（如：小王）",
+        catName: { material: "💰 物質條件", life: "🌿 生活習慣", mind: "🧠 精神思想" },
+        chip: { material: "30%", life: "35%", mind: "35%" },
+        btnMatch: "💘 開始配對",
+        scoreLabel: "匹配度",
+        barTotal: "❤️ 總匹配",
+        verdicts: [
+          { e: "💘", t: "天作之合！立馬領證！", d: "月老看了這份報告都直呼內行。別猶豫了，這緣分打著燈籠都難找！" },
+          { e: "💖", t: "很有戲！大膽約！", d: "整體非常匹配，剩下的小差異正好互補。今晚就約出來吃飯吧！" },
+          { e: "🌶️", t: "有火花，但需要磨合", d: "基礎不錯，分歧也有。感情不是考試，聊聊也許就對了。" },
+          { e: "😬", t: "有點懸，謹慎前行", d: "差異比共同點多。除非你們都特別願意為對方改變，否則容易互相消耗。" },
+          { e: "🧊", t: "平行宇宙的兩個人", d: "這不是緣分的問題，是兩個世界的問題。放過彼此，去人海裡找更對的人吧。" }
+        ],
+        tGood: "✅ 默契點",
+        tGoodText: "你們倆在「{f}」上出奇一致，聊天不用解釋太多。",
+        tWarn: "⚠️ 注意",
+        tWarnText: "「{f}」兩人選擇相距較遠，建議提前聊開，別等在一起之後再翻舊帳。",
+        tPerfect: "🏆 零衝突",
+        tPerfectText: "居然一個分歧點都沒有？！你們是失散多年的靈魂伴侶吧！",
+        footer: "結果僅供娛樂參考，感情還是要靠真心 💞",
+        privacy: "🔒 你的測評資料僅保存在站長後台，不會公開展示，其他人不可見。",
+        payTitle: "解鎖你們的緣分報告",
+        payDesc: "只需 0.99 元，即可查看完整匹配度報告 + 紅娘點評。掃碼支付後點擊下方按鈕。",
+        qrHint: "請使用微信/支付寶掃碼支付 ¥0.99",
+        btnPaid: "✅ 我已付款，查看結果",
+        btnPayCancel: "再想想",
+        saveOk: "報告已解鎖，測評記錄已保存 🔒",
+        saveFail: "結果已顯示，但雲端記錄保存失敗，請檢查網路",
+        toastDemo: "已填入隨機示例，點擊「開始配對」查看結果",
+        fields: {
+          income: { label: "月收入", l: ["吃土", "年薪百萬"], unit: "k" },
+          saving: { label: "存款底氣", l: ["月光族", "小金庫厚實"] },
+          edu: { label: "學歷", o: ["高中及以下", "大專", "本科", "碩士", "博士"] },
+          house: { label: "住房情況", o: ["租房", "有房帶貸", "有房無貸", "多套房"] },
+          car: { label: "座駕情況", o: ["無車", "普通代步車", "中高端車", "豪華車"] },
+          debt: { label: "負債情況", o: ["無負債", "少量房貸車貸", "負債較多"] },
+          family: { label: "父母負擔", o: ["無需贍養", "正常贍養", "壓力較大"] },
+          sleep: { label: "作息", l: ["早睡早起養生派", "熬夜冠軍夜貓子"] },
+          clean: { label: "整潔程度", l: ["亂中有序", "潔癖本癖"] },
+          spend: { label: "消費風格", l: ["能省則省", "及時行樂"] },
+          social: { label: "社交活躍度", l: ["宅家釘子戶", "派對靈魂人物"] },
+          sport: { label: "運動頻率", l: ["沙發馬鈴薯", "健身狂魔"] },
+          phone: { label: "手機依賴度", l: ["放手機陪你", "機不離手"] },
+          travel: { label: "旅行偏好", l: ["宅家最香", "走遍世界"] },
+          food: { label: "飲食口味", l: ["清淡為主", "無辣不歡"] },
+          smoke: { label: "吸菸", o: ["從不", "偶爾應酬", "經常"] },
+          drink: { label: "喝酒", o: ["滴酒不沾", "小酌怡情", "無酒不歡"] },
+          pet: { label: "對寵物", o: ["愛寵人士", "中立", "不喜歡"] },
+          kid: { label: "生育觀", o: ["堅定丁克", "隨緣", "一定要孩子"] },
+          living: { label: "婚後與父母", o: ["分開住", "視情況", "希望同住"] },
+          career: { label: "事業與家庭的天平", l: ["家庭為重", "事業為重"] },
+          space: { label: "個人空間需求", l: ["如膠似漆", "需要獨處充電"] },
+          express: { label: "感情表達方式", l: ["愛在心口難開", "熱烈直球"] },
+          plan: { label: "做事風格", l: ["隨性佛系", "計畫控"] },
+          hobby: { label: "為興趣花錢", o: ["捨得投入", "看心情", "盡量省"] },
+          emotion: { label: "情緒穩定性", l: ["易燃易爆炸", "情緒穩定器"] },
+          learn: { label: "成長意願", l: ["得過且過", "終身學習"] },
+          argue: { label: "吵架之後", o: ["當天和好", "冷靜一晚", "容易冷戰"] }
+        }
+      },
+      en: {
+        logo: "💘 Match Lab",
+        heroTitlePre: "Are you two ",
+        heroTitleGrad: "a real match?",
+        heroSub: "28 real-world questions: money, lifestyle & values — scored in one go 🔥",
+        panelA: "💗 Person A",
+        panelB: "💜 Person B",
+        namePh: "Nickname (e.g. Alex)",
+        catName: { material: "💰 Material", life: "🌿 Lifestyle", mind: "🧠 Values" },
+        chip: { material: "30%", life: "35%", mind: "35%" },
+        btnMatch: "💘 Match Us!",
+        scoreLabel: "Match Score",
+        barTotal: "❤️ Overall",
+        verdicts: [
+          { e: "💘", t: "Made for each other — tie the knot now!", d: "Even the god of marriage would call this textbook. A match this rare doesn't come twice!" },
+          { e: "💖", t: "Strong potential — ask them out!", d: "Highly compatible overall, and the small differences complement each other. Dinner tonight!" },
+          { e: "🌶️", t: "Sparks exist, but work is needed", d: "Solid foundation, real differences. Love isn't an exam — talk it out." },
+          { e: "😬", t: "Risky — proceed carefully", d: "More differences than common ground. Unless both are willing to change for each other, it may drain you both." },
+          { e: "🧊", t: "People from parallel universes", d: "This isn't about fate — it's two different worlds. Let go and find a better fit out there." }
+        ],
+        tGood: "✅ In sync",
+        tGoodText: "You two are surprisingly aligned on \"{f}\" — no explaining needed.",
+        tWarn: "⚠️ Watch out",
+        tWarnText: "\"{f}\" — your answers are far apart. Talk about it early, don't dig it up later.",
+        tPerfect: "🏆 Zero conflict",
+        tPerfectText: "Not a single disagreement?! Are you two long-lost soul mates?!",
+        footer: "For entertainment only — real love still takes heart 💞",
+        privacy: "🔒 Your answers are stored privately in the site owner's backend only — never shown publicly.",
+        payTitle: "Unlock Your Match Report",
+        payDesc: "Only ¥0.99 to view the full compatibility report + coach's notes. Scan to pay, then tap the button below.",
+        qrHint: "Scan with WeChat / Alipay to pay ¥0.99",
+        btnPaid: "✅ I've paid — show results",
+        btnPayCancel: "Maybe later",
+        saveOk: "Report unlocked & your record is saved 🔒",
+        saveFail: "Results shown, but saving to the cloud failed — check your connection",
+        toastDemo: "Random sample filled in — hit \"Match Us!\" to see the result",
+        fields: {
+          income: { label: "Monthly income", l: ["broke", "rich"], unit: "k" },
+          saving: { label: "Savings cushion", l: ["living paycheck to paycheck", "solid nest egg"] },
+          edu: { label: "Education", o: ["High school or below", "Associate", "Bachelor", "Master", "Doctorate"] },
+          house: { label: "Housing", o: ["Renting", "Mortgaged home", "Owned outright", "Multiple properties"] },
+          car: { label: "Car", o: ["No car", "Basic car", "Mid-to-high end", "Luxury car"] },
+          debt: { label: "Debt", o: ["None", "Some mortgage/loan", "Quite a lot"] },
+          family: { label: "Supporting parents", o: ["Not needed", "Normal support", "Heavy pressure"] },
+          sleep: { label: "Sleep schedule", l: ["early bird", "night owl champ"] },
+          clean: { label: "Tidiness", l: ["organized chaos", "neat freak"] },
+          spend: { label: "Spending style", l: ["save every cent", "YOLO spender"] },
+          social: { label: "Social energy", l: ["homebody", "party legend"] },
+          sport: { label: "Exercise", l: ["couch potato", "gym fanatic"] },
+          phone: { label: "Phone addiction", l: ["phone down, eyes on you", "attached at the hip to the phone"] },
+          travel: { label: "Travel style", l: ["home is best", "see the whole world"] },
+          food: { label: "Food taste", l: ["mild flavors", "spicy everything"] },
+          smoke: { label: "Smoking", o: ["Never", "Occasionally", "Often"] },
+          drink: { label: "Drinking", o: ["Never drink", "Social drinker", "Love a drink"] },
+          pet: { label: "Pets", o: ["Pet lover", "Neutral", "Not a fan"] },
+          kid: { label: "Having kids", o: ["Firmly child-free", "Go with the flow", "Definitely want kids"] },
+          living: { label: "Living with parents", o: ["Separate homes", "Depends", "Prefer together"] },
+          career: { label: "Career vs family", l: ["family first", "career first"] },
+          space: { label: "Personal space", l: ["glued together", "need alone time to recharge"] },
+          express: { label: "Expressing love", l: ["keeps it inside", "bold and direct"] },
+          plan: { label: "Planning style", l: ["go with the flow", "master planner"] },
+          hobby: { label: "Spending on hobbies", o: ["Happy to invest", "Depends on mood", "Try to save"] },
+          emotion: { label: "Emotional stability", l: ["short fuse", "calm anchor"] },
+          learn: { label: "Growth mindset", l: ["drifting along", "lifelong learner"] },
+          argue: { label: "After a fight", o: ["Make up same day", "Cool off a night", "Tend to go silent"] }
+        }
+      }
+    };
+
+    /* ================= 状态 ================= */
+    let lang = "zh";
+    const $ = id => document.getElementById(id);
+    const T = () => I18N[lang];
+
+    /* ================= 语言 ================= */
+    function applyLang(l) {
+      lang = l;
+      document.documentElement.lang = l === "zh" ? "zh-CN" : l === "tw" ? "zh-TW" : "en";
+      const t = T();
+      $("logo").textContent = t.logo;
+      $("heroTitle").innerHTML = `${t.heroTitlePre}<span class="grad">${t.heroTitleGrad}</span>`;
+      $("heroSub").textContent = t.heroSub;
+      $("panelATitle").textContent = t.panelA;
+      $("panelBTitle").textContent = t.panelB;
+      $("nameA").placeholder = t.namePh;
+      $("nameB").placeholder = t.namePh;
+      $("btnMatch").textContent = t.btnMatch;
+      $("scoreLabel").textContent = t.scoreLabel;
+      $("barNameMaterial").textContent = t.catName.material;
+      $("barNameLife").textContent = t.catName.life;
+      $("barNameMind").textContent = t.catName.mind;
+      $("barNameTotal").textContent = t.barTotal;
+      $("payTitle").textContent = t.payTitle;
+      $("payDesc").textContent = t.payDesc;
+      $("qrHint").textContent = t.qrHint;
+      $("btnPaid").textContent = t.btnPaid;
+      $("btnPayCancel").textContent = t.btnPayCancel;
+      $("footerText").textContent = t.footer;
+      $("footerPrivacy").textContent = t.privacy;
+      $("langSwitch").value = l;
+      localStorage.setItem("ml_lang", l);
+      buildFields("fieldsA", "a");
+      buildFields("fieldsB", "b");
+    }
+
+    $("langSwitch").addEventListener("change", e => applyLang(e.target.value));
+    document.querySelectorAll(".lang-opt").forEach(btn => {
+      btn.addEventListener("click", () => {
+        $("langOverlay").hidden = true;
+        applyLang(btn.dataset.lang);
+      });
+    });
+
+    /* ================= 表单生成 ================= */
+    function buildFields(containerId, suffix) {
+      const box = $(containerId);
+      const prev = {};
+      // 保留已有输入
+      box.querySelectorAll("input,select").forEach(el => { prev[el.id] = el.value; });
+      box.innerHTML = "";
+      const t = T();
+      FIELDS.forEach(f => {
+        const meta = t.fields[f.key];
+        const wrap = document.createElement("div");
+        wrap.className = "field";
+        const id = `${f.key}_${suffix}`;
+        if (f.type === "range") {
+          wrap.innerHTML = `
+            <label>${meta.label}<span class="val" id="v_${id}"></span></label>
+            <input type="range" id="${id}" min="0" max="${f.max}" value="50">
+            <div class="range-ends"><span>${meta.l[0]}</span><span>${meta.l[1]}</span></div>`;
+          box.appendChild(wrap);
+          const input = wrap.querySelector("input");
+          const out = wrap.querySelector(".val");
+          const update = () => { out.textContent = input.value + (meta.unit || ""); };
+          input.addEventListener("input", update);
+          if (prev[id] !== undefined) input.value = prev[id];
+          update();
+        } else {
+          wrap.innerHTML = `
+            <label>${meta.label}</label>
+            <select id="${id}">${meta.o.map((o, i) => `<option value="${i}">${o}</option>`).join("")}</select>`;
+          box.appendChild(wrap);
+          if (prev[id] !== undefined) wrap.querySelector("select").value = prev[id];
+        }
+      });
+    }
+
+    /* ================= 计分 ================= */
+    const val = (key, s) => Number($(key + "_" + s).value);
+
+    function scoreAll() {
+      const catScore = { material: [], life: [], mind: [] };
+      const issues = [], highlights = [];
+      const t = T();
+
+      FIELDS.forEach(f => {
+        const a = val(f.key, "a"), b = val(f.key, "b");
+        let s;
+        if (f.type === "range") {
+          s = Math.max(0, 100 - Math.abs(a - b) / f.scale);
+          if (Math.abs(a - b) > 45) issues.push(f);
+        } else {
+          s = Math.max(0, 100 - Math.abs(a - b) * f.penalty);
+          if (Math.abs(a - b) >= 2) issues.push(f);
+        }
+        if (s >= 90) highlights.push(f);
+        catScore[f.cat].push(s);
+      });
+
+      const avg = arr => arr.length ? arr.reduce((x, y) => x + y, 0) / arr.length : 0;
+      const scores = {};
+      let total = 0;
+      CATS.forEach(c => {
+        scores[c] = Math.round(avg(catScore[c]));
+        total += scores[c] * WEIGHTS[c];
+      });
+      return { scores, total: Math.round(total), issues, highlights };
+    }
+
+    function verdictFor(total) {
+      const v = T().verdicts;
+      if (total >= 85) return v[0];
+      if (total >= 70) return v[1];
+      if (total >= 55) return v[2];
+      if (total >= 40) return v[3];
+      return v[4];
+    }
+
+    /* ================= 渲染结果 ================= */
+    function render(savedOk) {
+      const { scores, total, issues, highlights } = scoreAll();
+      const t = T();
+
+      const result = $("result");
+      result.hidden = false;
+      result.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      const C = 2 * Math.PI * 95;
+      const fg = $("gaugeFg");
+      fg.style.strokeDasharray = C;
+      requestAnimationFrame(() => { fg.style.strokeDashoffset = C * (1 - total / 100); });
+
+      const numEl = $("scoreNum");
+      let cur = 0;
+      const step = () => {
+        cur = Math.min(total, cur + Math.max(1, Math.ceil((total - cur) / 12)));
+        numEl.textContent = cur;
+        if (cur < total) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+
+      const v = verdictFor(total);
+      $("verdict").textContent = `${v.e} ${v.t}`;
+      $("verdictText").textContent = v.d;
+
+      const map = { Material: scores.material, Life: scores.life, Mind: scores.mind, Total: total };
+      setTimeout(() => {
+        for (const k in map) {
+          $("bar" + k).style.width = map[k] + "%";
+          $("num" + k).textContent = map[k];
+        }
+      }, 50);
+
+      const tips = $("tips");
+      tips.innerHTML = "";
+      const addTip = (cls, html) => {
+        const d = document.createElement("div");
+        d.className = "tip " + cls;
+        d.innerHTML = html;
+        tips.appendChild(d);
+      };
+      highlights.slice(0, 3).forEach(f => {
+        addTip("good", `<b>${t.tGood}</b>${t.tGoodText.replace("{f}", t.fields[f.key].label)}`);
+      });
+      issues.slice(0, 4).forEach(f => {
+        addTip("warn", `<b>${t.tWarn}</b>${t.tWarnText.replace("{f}", t.fields[f.key].label)}`);
+      });
+      if (!issues.length) addTip("good", `<b>${t.tPerfect}</b>${t.tPerfectText}`);
+
+      if (total >= 85) hearts();
+    }
+
+    /* ================= 云端保存 ================= */
+    async function saveRecord(paid) {
+      if (!cloud) return false;
+      const { scores, total } = scoreAll();
+      const collect = suffix => {
+        const o = {};
+        FIELDS.forEach(f => { o[f.key] = val(f.key, suffix); });
+        return o;
+      };
+      const row = {
+        lang,
+        name_a: $("nameA").value.trim().slice(0, 12) || null,
+        name_b: $("nameB").value.trim().slice(0, 12) || null,
+        answers_a: collect("a"),
+        answers_b: collect("b"),
+        score_total: total,
+        score_material: scores.material,
+        score_life: scores.life,
+        score_mind: scores.mind,
+        paid
+      };
+      const { error } = await cloud.database.from("match_records").insert(row);
+      return !error;
+    }
+
+    /* ================= 付款弹窗流程 ================= */
+    let payOpen = false;
+    function openPay() {
+      payOpen = true;
+      $("payOverlay").hidden = false;
+    }
+    function closePay() {
+      payOpen = false;
+      $("payOverlay").hidden = true;
+    }
+    $("btnMatch").addEventListener("click", openPay);
+    $("btnPayCancel").addEventListener("click", closePay);
+    $("payOverlay").addEventListener("click", e => { if (e.target === $("payOverlay")) closePay(); });
+
+    $("btnPaid").addEventListener("click", async () => {
+      const btn = $("btnPaid");
+      btn.disabled = true;
+      const ok = await saveRecord(true);
+      btn.disabled = false;
+      closePay();
+      render();
+      if (ok) toast(T().saveOk, "ok");
+      else toast(T().saveFail, "err");
+    });
+
+    /* ================= 示例 & 重置 ================= */
+    $("btnDemo").addEventListener("click", () => {
+      const names = {
+        zh: ["干饭侠", "夜跑达人", "猫奴一号", "搞钱狂魔", "文艺青年", "社恐星人", "阳光直球", "人间清醒"],
+        tw: ["乾飯俠", "夜跑達人", "貓奴一號", "搞錢狂魔", "文藝青年", "社恐星人", "陽光直球", "人間清醒"],
+        en: ["Foodie", "Night Runner", "Cat Person", "Hustler", "Artist", "Introvert", "Sunshine", "Realist"]
+      }[lang];
+      $("nameA").value = names[Math.floor(Math.random() * names.length)];
+      $("nameB").value = names[Math.floor(Math.random() * names.length)];
+      ["a", "b"].forEach(s => {
+        FIELDS.forEach(f => {
+          const el = $(f.key + "_" + s);
+          if (f.type === "range") {
+            el.value = Math.floor(Math.random() * (f.max + 1));
+            el.dispatchEvent(new Event("input"));
+          } else {
+            el.selectedIndex = Math.floor(Math.random() * el.options.length);
+          }
+        });
+      });
+      toast(T().toastDemo);
+    });
+
+    $("btnReset").addEventListener("click", () => {
+      ["a", "b"].forEach(s => {
+        FIELDS.forEach(f => {
+          const el = $(f.key + "_" + s);
+          if (f.type === "range") {
+            el.value = 50;
+            el.dispatchEvent(new Event("input"));
+          } else {
+            el.selectedIndex = 0;
+          }
+        });
+      });
+      $("nameA").value = "";
+      $("nameB").value = "";
+      $("result").hidden = true;
+    });
+
+    /* ================= 小工具 ================= */
+    function toast(msg, type) {
+      const el = $("toast");
+      el.textContent = msg;
+      el.className = "toast show" + (type ? " " + type : "");
+      clearTimeout(el._t);
+      el._t = setTimeout(() => { el.className = "toast"; }, 2600);
+    }
+
+    function hearts() {
+      const emo = ["💘", "💖", "💕", "❤️", "💗", "🩷"];
+      for (let i = 0; i < 28; i++) {
+        const h = document.createElement("div");
+        h.className = "heart-fx";
+        h.textContent = emo[Math.floor(Math.random() * emo.length)];
+        h.style.left = Math.random() * 100 + "vw";
+        h.style.animationDuration = (2.2 + Math.random() * 2) + "s";
+        h.style.animationDelay = Math.random() * 0.8 + "s";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 5200);
+      }
+    }
+
+    /* 收款码图片：优先 assets/payment_qr.png，找不到则用占位图 */
+    $("qrImg").addEventListener("error", function () {
+      this.onerror = null;
+      this.src = "assets/payment_qr.svg";
+    });
+
+    /* ================= 启动 ================= */
+    const savedLang = localStorage.getItem("ml_lang");
+    if (savedLang && I18N[savedLang]) {
+      $("langOverlay").hidden = true;
+      applyLang(savedLang);
+    } else {
+      applyLang("zh");
+    }
+  </script>
+</body>
+</html>
